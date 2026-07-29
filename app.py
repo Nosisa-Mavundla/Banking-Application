@@ -38,6 +38,37 @@ VALUES(?,?,?)
     return render_template("register.html")
 
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        # read info fromthe form
+        email = request.form["email"]
+        password = request.form["password"]
+
+# get connection
+        connection = get_connection()
+        cursor = connection.cursor()
+
+# read from the db table for users identity verification
+
+        cursor.execute("""
+SELECT * FROM users
+WHERE email = ?
+   """, (email,))
+
+        users = cursor.fetchone()
+# Application makes a decison whether tolet the user in
+        if users:
+            if password == users[3]:
+                return "Login successful!"
+            else:
+                return "Incorect password!"
+        else:
+            return " User does not exist!"
+
+    return render_template("login.html")
+
+
 create_tables()
 
 if __name__ == "__main__":
