@@ -1,10 +1,10 @@
 # Bringing the flask framework to our python file
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect
 from database import create_tables, get_connection
 # create our flask app
 
 app = Flask(__name__)
-
+app.secret_key = "secrete_key"
 # the homepage fuction
 
 
@@ -40,6 +40,7 @@ VALUES(?,?,?)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+
     if request.method == "POST":
         # read info fromthe form
         email = request.form["email"]
@@ -56,17 +57,27 @@ SELECT * FROM users
 WHERE email = ?
    """, (email,))
 
-        users = cursor.fetchone()
+        user = cursor.fetchone()
+        connection.close()
 # Application makes a decison whether tolet the user in
-        if users:
-            if password == users[3]:
-                return "Login successful!"
+        if user:
+            if password == user[3]:
+                session["id"] = user[0]
+                return redirect("/dashboard")
             else:
                 return "Incorect password!"
         else:
             return " User does not exist!"
 
     return render_template("login.html")
+
+
+@app.route("/dashboard")
+def dashboard():
+    if "id" not in session:
+        return redirect("/login")
+
+    return "Welcome to your dashboard!"
 
 
 create_tables()
