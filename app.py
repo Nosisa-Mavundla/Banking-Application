@@ -76,8 +76,30 @@ WHERE email = ?
 def dashboard():
     if "id" not in session:
         return redirect("/login")
+# if user id is in session flask retrives the session
+    id = session["id"]
+# connect to database /open db
+    connection = get_connection()
+    cursor = connection.cursor()
 
-    return "Welcome to your dashboard!"
+    cursor.execute("""
+    SELECT*FROM users
+    WHERE id =?
+
+   """, (id,))
+
+    user = cursor.fetchone()
+    connection.close()
+
+    full_name = user[1]
+
+    return render_template("dashboard.html", full_name=full_name)
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
 
 
 create_tables()
