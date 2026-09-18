@@ -1,7 +1,5 @@
 # 🏦 Banking Application
 
-**🚧 Status: In Progress** — actively being developed and improved.
-
 A web-based banking application built with **Python, Flask, and SQLite**. Users can register for an account if they don't already have one, log in securely, access a personalized dashboard, and perform basic banking operations.
 
 ---
